@@ -3,5 +3,5 @@ Integrantes:
 
 Santa Cruz Carlos, 
 Mercado Violeta, 
-García Juarez Mateo
+García Juarez Mateo,
 Martin Natasha
