@@ -1,9 +1,6 @@
 
 
 
-from itertools import product
-
-
 Class product () :
     Id_producto = 0,
     Nombre_producto = "",
