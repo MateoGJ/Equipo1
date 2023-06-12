@@ -4,11 +4,11 @@ class produccionDiaria():
     fecha = 0,
     cantidad_producto = 0,
 
-    def __init__(self, id, fecha, id_producto, cantidad):
+    def __init__(self, id, fecha, id_producto, cantidad_producto):
         self.id = id
         self.fecha = fecha
         self.id_producto = id_producto
-        self.cantidad_producida = cantidad_producida
+        self.cantidad_producto = cantidad_producto
 
 
     def get_fecha(self):
@@ -19,5 +19,5 @@ class produccionDiaria():
     
     def setid_fecha(self, fecha):
         self.fecha = fecha
-    def setid_cantidad_producida(self, cantidad_producida):
-        self.cantidad_producida = cantidad_producida
+    def setid_cantidad_producto(self, cantidad_producto):
+        self.cantidad_producto = cantidad_producto
