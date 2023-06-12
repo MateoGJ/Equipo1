@@ -24,7 +24,7 @@ class Conectar_BD():
         if self.conexion.is_connected():
             try:
                 cursor = self.conexion.cursor()
-                sentenciaSQL = "INSERT INTO producto values(%s,%s,%s,%s,%s)"
+                sentenciaSQL = "INSERT INTO productos values(%s,%s,%s,%s,%s)"
                 data = (
                         #producto.get_id_producto(),
                         random.randint(1,999),
@@ -47,14 +47,14 @@ class Conectar_BD():
         if self.conexion.is_connected():
             try:
                 cursor = self.conexion.cursor()
-                sentenciaSQL = "SELECT * FROM producto"
+                sentenciaSQL = "SELECT * FROM productos"
                 cursor.execute(sentenciaSQL)
                 resultados= cursor.fetchall()
                 cursor.close()
                 return resultados
                 
             except mysql.connector.Error as descripcionDelError:
-                print("¡Hubo un error al intentar conctar la Base de Datos", descripcionDelError)
+                print("¡Hubo un error al intentar conectar la Base de Datos", descripcionDelError)
 
     def Listado_Produccion_diaria(self):
         if self.conexion.is_connected():
