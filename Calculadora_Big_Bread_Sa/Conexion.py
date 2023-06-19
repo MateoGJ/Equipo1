@@ -56,11 +56,11 @@ class Conectar_BD():
             except mysql.connector.Error as descripcionDelError:
                 print("¡Hubo un error al intentar conectar la Base de Datos", descripcionDelError)
 
-    def Listado_Produccion_diaria(self):
+    def Listado_Produccion_Diaria(self):
         if self.conexion.is_connected():
             try:
                 cursor = self.conexion.cursor()
-                sentenciaSQL = "SELECT * FROM produccion_diaria"
+                sentenciaSQL = "SELECT * FROM producciones_diarias"
                 cursor.execute(sentenciaSQL)
                 resultados= cursor.fetchall()
                 cursor.close()
@@ -69,17 +69,17 @@ class Conectar_BD():
             except mysql.connector.Error as descripcionDelError:
                 print("¡Hubo un error al intentar conctar la Base de Datos", descripcionDelError)    
 
-    def Insertar_Produccion_diaria(self, produccion_diaria):
+    def Insertar_Produccion_Diaria(self, produccion_diaria):
         if self.conexion.is_connected():
             try:
                 cursor = self.conexion.cursor()
-                sentenciaSQL = "INSERT INTO producto values(%s,%s,%s)"
+                sentenciaSQL = "INSERT INTO producciones_diarias values(%s,%s,%s,%s)"
                 data = (
                         #producto.get_id_producto(),
                         random.randint(1,999),
-                        produccion_diaria.get_fecha(),
+                        produccion_diaria.get_fecha().strftime("%d%m%Y"),
                         produccion_diaria.get_id_producto(),
-                        produccion_diaria.get_cantidad_producida(),
+                        produccion_diaria.get_cantidad_producto(),
                         )
                 
                 cursor.execute(sentenciaSQL,data)

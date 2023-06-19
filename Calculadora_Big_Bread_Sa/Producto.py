@@ -5,8 +5,8 @@ class Producto():
     id_producto = 0,
     nombre_producto = "",
     descripcion = "",
-    Precio = 0,
-    Tiempo_preparacion = 0
+    precio = 0,
+    tiempo_preparacion = 0
 
     def __init__(self, id_producto, nombre_producto, descripcion, precio, tiempo_preparacion):
         self.id_producto = id_producto

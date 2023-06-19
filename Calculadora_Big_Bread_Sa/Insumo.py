@@ -1,15 +1,15 @@
 class Insumo:
-    ID_Insumo = 0,
-    Nombre = "",
-    Unidad_medida = "",
-    Precio = 0,
-    Stock_actual = 0,
-    ID_Proveedor = 0     
+    id_insumo = 0,
+    nombre_insumo = "",
+    unidad_medida = "",
+    precio = 0,
+    stock_actual = 0,
+    id_proveedor = 0     
         
-    def __init__(self, id, nombre, unidad_medida, precio, stock_actual,id_Proveedor):
-        self.ID = id
-        self.Nombre = nombre
-        self.Unidad_medida = unidad_medida
-        self.Precio = precio
-        self.Stock_actual = stock_actual
-        self.ID_Proveedor = id_Proveedor
+    def __init__(self, id_insumo, nombre_insumo, unidad_medida, precio, stock_actual, id_proveedor):
+        self.id_insumo = id_insumo
+        self.nombre_insumo = nombre_insumo
+        self.unidad_medida = unidad_medida
+        self.precio = precio
+        self.stock_actual = stock_actual
+        self.id_proveedor = id_proveedor
