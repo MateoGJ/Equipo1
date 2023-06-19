@@ -8,7 +8,7 @@ class Conectar_BD():
                 host= "localhost",
                 port= 3306, 
                 user= "root",
-                password= 'maximiliano1o1o',
+                password= '**********',
                 db= "bd_big_bread",
                 auth_plugin='mysql_native_password'
             )
