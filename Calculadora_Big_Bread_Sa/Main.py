@@ -152,6 +152,14 @@ elif  ingresaProducto == 6:
     
 elif  ingresaProducto == 7:
     con = Conectar_BD()
+    insumos = con.Listado_De_Insumos()
+    for index, insumo in enumerate (insumos):
+        print("%s - %s" % (index, insumo[1]))
+    indice_fecha = int(input("Seleccione la fecha: "))
+    fecha_seleccionado = insumos [indice_fecha] 
+    fecha_id = fecha_seleccionado [0]
+    for i in insumos:
+        print("Producto: %s, Cantidad utilizada: %s" % (i[2], i[3]))
 
 elif  ingresaProducto == 8:
     con = Conectar_BD()
