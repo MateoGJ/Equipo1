@@ -8,7 +8,7 @@ class Conectar_BD():
                 host= "localhost",
                 port= 3306, 
                 user= "root",
-                password= '**********',
+                password= 'maximiliano1o1o',
                 db= "bd_big_bread",
                 auth_plugin='mysql_native_password'
             )
@@ -67,7 +67,7 @@ class Conectar_BD():
                 return resultados
                 
             except mysql.connector.Error as descripcionDelError:
-                print("¡Hubo un error al intentar conctar la Base de Datos", descripcionDelError)    
+                print("¡Hubo un error al intentar conectar la Base de Datos", descripcionDelError)    
 
     def Insertar_Produccion_Diaria(self, produccion_diaria):
         if self.conexion.is_connected():
@@ -77,7 +77,7 @@ class Conectar_BD():
                 data = (
                         #producto.get_id_producto(),
                         random.randint(1,999),
-                        produccion_diaria.get_fecha().strftime("%d%m%Y"),
+                        produccion_diaria.get_fecha().strftime("%d-%m-%Y"),
                         produccion_diaria.get_id_producto(),
                         produccion_diaria.get_cantidad_producto(),
                         )
