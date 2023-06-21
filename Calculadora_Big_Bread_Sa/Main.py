@@ -2,7 +2,7 @@ from Conexion import Conectar_BD
 from Producto import Producto
 from Insumo import Insumo
 from ProduccionDiaria import ProduccionDiaria
-from datetime import date, datetime
+from datetime import datetime
 
 print("*******BIENVENIDO A LA CALCULADORA BIG BREAD SA***********")
 print("¿¿Que desea hacer hoy??")
@@ -29,6 +29,7 @@ if ingresaProducto == 1:
         tiempo_Preparacion = input("Ingrese el tiempo de preparación del producto:")
         producto = Producto(0, nombre_Producto, descripcion, precio, tiempo_Preparacion)
         con.Insertar_Producto(producto)
+        
     
     elif accion == 2:
         con = Conectar_BD()
@@ -69,9 +70,9 @@ elif  ingresaProducto == 2:
         ingresaProducto == 2
     
 
-elif  ingresaProducto == 3:
+elif ingresaProducto == 3:
     con = Conectar_BD()
-    print("¿¿Que acción desea realizar??") 
+    print("¿¿Que acción desea realizar??")
     print("Ingresar una producción diaria: 1")
     print("Eliminar una producción diaria: 2")
     print("Modificar una producción diaria: 3")
@@ -79,33 +80,36 @@ elif  ingresaProducto == 3:
     produccion_diaria = con.Listado_Produccion_Diaria()
     if accion == 1:
         con = Conectar_BD()
+        global productos
         productos = con.Listado_De_Productos()
-        print("Ingrese la fecha de producción (formato dd/mm/aaaa):")  
+        fecha = input("Ingrese la fecha de producción (formato dd/mm/aaaa): ")
+        fecha_produccion = datetime.strptime(fecha, "%d/%m/%Y")
 
-        day = int(input('Ingrese dia: '))
-        month = int(input('Ingrese mes: '))        
-        year = int(input('Ingrese año: '))
+        id_produccion_diaria = 1  # Reemplaza con el valor adecuado
+        id_producto = 0  # Reemplaza con el valor adecuado
+        cantidad_producto = 0  # Reemplaza con el valor adecuado
 
-        fecha = date(year, month, day)
-        print(fecha)
-        
-        def Ingresar_productos_fecha ():
-            for index, producto in enumerate (productos):
+        produccion_diaria = ProduccionDiaria(0, fecha_produccion, id_producto, cantidad_producto)
+        con.Insertar_Produccion_Diaria(produccion_diaria)
+
+        def Ingresar_productos_fecha():
+            for index, producto in enumerate(productos):
                 print("%s - %s" % (index, producto[1]))
             indice_producto = int(input("Seleccione el producto: "))
-            producto_seleccionado = productos [indice_producto] 
+            producto_seleccionado = productos[indice_producto]
             global producto_id
             global cantidad_producto
-            producto_id = producto_seleccionado [0]  
+            producto_id = producto_seleccionado[0]
             cantidad_producto = int(input("Ingrese la cantidad del producto: "))
-            print("Perfecto! Desea cargar otro producto?? (1 = SI - 2 = NO)")
-            cargar_mas_productos = int(input())  
-            if  cargar_mas_productos == 1:
+            print("Perfecto! ¿Desea cargar otro producto? (1 = SI - 2 = NO)")
+            cargar_mas_productos = int(input())
+            if cargar_mas_productos == 1:
                 Ingresar_productos_fecha()
             elif cargar_mas_productos == 2:
-                global produccion_diaria 
-                produccion_diaria = ProduccionDiaria(0, fecha, producto_id, cantidad_producto)
+                global produccion_diaria
+                produccion_diaria = ProduccionDiaria(0, fecha_produccion, producto_id, cantidad_producto)
                 con.Insertar_Produccion_Diaria(produccion_diaria)
+
         Ingresar_productos_fecha()
      
     
@@ -143,14 +147,54 @@ elif  ingresaProducto == 6:
     indice_fecha = int(input("Seleccione la fecha: "))
     fecha_seleccionado = prod_diaria [indice_fecha] 
     fecha_id = fecha_seleccionado [0]
+    total_cantidad_producida = 0
     for i in prod_diaria:
-        print("Producto: %s, Cantidad producida: %s" % (i[2], i[3]))
-    for cantidad_producto in prod_diaria:
-        prod_total_diaria = (i)
-    print(f"Produccion total del día: {prod_total_diaria}")
+        cantidad_producida = i[3]
+        total_cantidad_producida += cantidad_producida
+        print("Producto: %s, Cantidad producida: %s" % (i[2], cantidad_producida))
+    print("La cantidad total producida es: %s" % total_cantidad_producida)
         
     
-elif  ingresaProducto == 7:
+elif ingresaProducto == 7:
+    con = Conectar_BD()
+    prod_diaria = con.Listado_Produccion_Diaria()
+    
+    for index, produccion_diaria in enumerate(prod_diaria):
+        print("%s - %s" % (index, produccion_diaria[1]))
+    
+    fecha_inicio = int(input("Ingrese el índice de la fecha de inicio: "))
+    fecha_fin = int(input("Ingrese el índice de la fecha de fin: "))
+
+    fechas_disponibles = set([produccion_diaria[1] for produccion_diaria in prod_diaria])
+    fechas_disponibles = sorted(list(fechas_disponibles))
+
+    for index, fecha in enumerate(fechas_disponibles):
+        print("%s - %s" % (index, fecha))
+
+    total_cantidad_producida = 0
+
+    if 0 <= fecha_inicio < len(fechas_disponibles) and 0 <= fecha_fin < len(fechas_disponibles) and fecha_inicio <= fecha_fin:
+        fecha_inicio = fechas_disponibles[fecha_inicio]
+        fecha_fin = fechas_disponibles[fecha_fin]
+
+        total_cantidad_producida = 0
+
+        for produccion in producciones:
+            fecha = produccion[0]
+            producto_id = produccion[1]
+            cantidad_producida = produccion[2]
+            
+            if fecha_inicio <= fecha <= fecha_fin:
+                total_cantidad_producida += cantidad_producida
+                if producto_id in productos:
+                    producto_nombre = productos[producto_id]
+                    print("Fecha: %s, Producto: %s, Cantidad producida: %s" % (fecha, producto_nombre, cantidad_producida))
+                else:
+                    print("Fecha: %s, ID de producto inválido: %s, Cantidad producida: %s" % (fecha, producto_id, cantidad_producida))
+
+        print("La cantidad producida total en el intervalo de tiempo es: %s" % total_cantidad_producida)
+
+elif  ingresaProducto == 8:
     con = Conectar_BD()
     insumos = con.Listado_De_Insumos()
     for index, insumo in enumerate (insumos):
@@ -159,9 +203,7 @@ elif  ingresaProducto == 7:
     fecha_seleccionado = insumos [indice_fecha] 
     fecha_id = fecha_seleccionado [0]
     for i in insumos:
-        print("Producto: %s, Cantidad utilizada: %s" % (i[2], i[3]))
+        print("Insumo: %s, Cantidad utilizada: %s" % (i[2], i[3]))
 
-elif  ingresaProducto == 8:
-    con = Conectar_BD()
 else:
     print("¡Opción incorrecta!")
