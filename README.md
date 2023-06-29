@@ -2,6 +2,6 @@
 
 Integrantes:
 
-Santa Cruz Carlos, 
+Santa Cruz Carlos
 Mercado Violeta, 
 García Juarez Mateo
