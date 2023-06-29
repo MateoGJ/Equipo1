@@ -7,6 +7,27 @@ from ProduccionDiaria import ProduccionDiaria
 from datetime import datetime
 
 con = Conectar_BD()
+
+def cargar_item_receta(producto_id):
+    print("Vamos a cargar los ingredientes ")
+    insumos = con.listado_Insumos()
+    print(" # - INSUMO ")
+    for indice, insumo in enumerate(insumos):
+        print(" %s - %s " % (indice, insumo[1]))
+    indice_insumo = int(input("Seleccione el insumo: "))
+    insumo_id = insumos[indice_insumo][0]
+    cantidad = int(input("Ingrese la cantidad requerida:"))
+    orden = int(input("Ingrese el orden de los productos(del 1 en adelante...):"))
+    procedimiento = 0
+    receta = Producto_x_Insumo(producto_id, insumo_id, cantidad, orden, procedimiento)
+    con.insertar_Receta(receta)
+    cargar_mas_insumos = int(input("Perfecto! ¿Desea cargar otro ingrediente? (1 = SI - 2 = NO)"))
+    if cargar_mas_insumos == 1:
+        cargar_item_receta(producto_id)
+    elif cargar_mas_insumos == 2:
+        print("Listo!! receta cargada...") 
+   
+
 def listar_productos():
     productos = con.Listado_De_Productos()
     print(" # - PRODUCTO ")
@@ -14,6 +35,7 @@ def listar_productos():
         print(" %s - %s " % (indice, producto[1]))
     indice_producto = int(input("Seleccione el producto: "))
     return productos[indice_producto]
+
 def listar_insumos():
     insumos = con.listado_Insumos()
     print(" # - PRODUCTO ")
@@ -21,6 +43,7 @@ def listar_insumos():
         print(" %s - %s " % (indice, insumo[1]))
     indice_insumo = int(input("Seleccione el insumo: "))
     return insumos[indice_insumo]
+
 def listar_producciones_diarias():
     producciones_diarias = con.Listado_Produccion_Diaria()
     print(" # - FECHA - PRODUCTO")
@@ -28,6 +51,7 @@ def listar_producciones_diarias():
         print(" %s - %s - %s" % (indice, produccion_diaria[1], produccion_diaria[2]))
     indice_produccion_diaria = int(input("Seleccione la producción: "))
     return producciones_diarias[indice_produccion_diaria]
+
 def listar_recetas():
     recetas = con.listado_Recetas()
     print(" # - RECETA ")
@@ -199,28 +223,8 @@ def principal():
         if accion == 1:
             print("Para que producto desea crear una receta??")
             producto = listar_productos()
-            cantidad = 0
-            insumo = 21
-            orden = 0
-            procedimiento = 0
-            
-            receta = Producto_x_Insumo(producto[0], insumo, cantidad, orden, procedimiento)
-            con.insertar_Receta(receta)
-            def insertar_insumo_receta():
-                print("Que ingredientes necesita para hacer una docena de %s??" % (producto[1]))
-                insumo = listar_insumos()
-                cantidad = int(input("Ingrese la cantidad requerida:"))
-                orden = int(input("Ingrese el orden de los productos(del 1 en adelante...):"))
-                receta = Producto_x_Insumo(producto, insumo, cantidad, orden, procedimiento)
-                con.insertar_Receta(receta)
-                cargar_mas_insumos = int(input("Perfecto! ¿Desea cargar otro ingrediente? (1 = SI - 2 = NO)"))
-                if cargar_mas_insumos == 1:
-                    insertar_insumo_receta()
-                elif cargar_mas_insumos == 2:
-                    print("Listo!! receta cargada...") 
-                    principal()  
-            insertar_insumo_receta()
-            
+            cargar_item_receta(producto[0])
+                     
 
         
         elif accion == 2:
