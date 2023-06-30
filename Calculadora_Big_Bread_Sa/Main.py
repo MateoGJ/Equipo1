@@ -53,12 +53,13 @@ def listar_producciones_diarias():
     return producciones_diarias[indice_produccion_diaria]
 
 def listar_recetas():
-    recetas = con.listado_Recetas()
-    print(" # - RECETA ")
+    productos = listar_productos()
+    recetas = con.listado_Recetas(productos[0])
+    print(" # - INGREDIENTES - CANTIDAD - ORDEN ")
     for indice, receta in enumerate(recetas):
-        print(" %s - %s " % (indice, receta[1]))
-    receta = int(input("Seleccione la receta: "))
-    return recetas[receta]
+        print(" %s - %s - %s - %s" % (indice, receta[1], receta[2], receta[3]))
+    ingrediente = int(input("Seleccione el ingrediente: "))
+    return recetas[ingrediente]
 
 def principal():
     print("*******BIENVENIDO A LA CALCULADORA BIG BREAD SA***********")
@@ -228,19 +229,22 @@ def principal():
 
         
         elif accion == 2:
-            recetas = listar_recetas()
-            con.delete_Receta(recetas[0])
+            producto = listar_productos()
+            con.delete_Receta(producto[0])
 
         
         elif accion == 3:
-            recetas = listar_recetas()
-            fecha_produccion = input("Fecha (%s): " % (produccion_diaria[1])) or produccion_diaria[1]
-            print("Producto (%s): " % (produccion_diaria[2]))
-            producto_id = listar_productos()
-            cantidad_producto = input("Cantidad (%s): " % (produccion_diaria[3])) or produccion_diaria[3]
-            record = Producto_x_Insumo(produccion_diaria[0], fecha_produccion, producto_id, cantidad_producto)
+            insumo = listar_recetas()
+            insumo = input("Ingrediente (%s): " % (insumo[1])) or insumo[1]
+            cantidad = input("Cantidad (%s): " % (insumo[2])) or insumo[2]
+            orden_insumos = input("Orden (%s): " % (insumo[3])) or insumo[3]
+            procedimiento = 0
+            record = Producto_x_Insumo(insumo[0], insumo, cantidad, orden_insumos, procedimiento)
             con.update_Receta(record)
-        
+
+        elif accion == 4:
+            listar_recetas()
+            
         else:
             print("¡¡Opción incorrecta!! Intente de nuevo...")
             principal()
@@ -313,13 +317,11 @@ def principal():
         # 01/01/2026
 
     elif  ingresaProducto == 8:
-        fecha_inicio = input("Ingrese la fecha de produccion (formato dd/mm/aaaa): ")
-        fecha_produccion_inicio = datetime.strptime(fecha_inicio, "%d/%m/%Y")
-        insumos = listar_insumos()
-        fecha_seleccionado = insumos [indice_fecha] 
-        fecha_id = fecha_seleccionado [0]
-        for i in insumos:
-            print("Insumo: %s, Cantidad utilizada: %s" % (i[2], i[3]))
+        fecha_produccion = listar_producciones_diarias()
+        insumos_usados = con.listado_Insumos_Dia(fecha_produccion[1])
+        print(" # - PRODUCTO - INSUMO - CANTIDAD")
+        for index, insumo in enumerate(insumos_usados):
+            print("%s - %s - %s - %s" % (index, insumo[0], insumo[1], insumo[2]))
 
     else:
         print("¡Opción incorrecta!")

@@ -102,8 +102,6 @@ class Conectar_BD():
                         receta.get_orden_insumos(),
                         receta.get_procedimiento()
                         )
-                print(data)
-                print(sentenciaSQL % data)
                 cursor.execute(sentenciaSQL,data)
                 self.conexion.commit()
                 cursor.close()   
@@ -179,13 +177,14 @@ class Conectar_BD():
         if self.conexion.is_connected():
             try:
                 cursor = self.conexion.cursor()
-                sentenciaSQL = "UPDATE productos_x_insumos SET producto_id = %s, insumo_id = %s, cantidad = %s, orden_insumos = %s, procedimiento = %s WHERE producto_id = %s "
+                sentenciaSQL = """UPDATE productos_x_insumos SET insumo_id = %s, cantidad = %s, orden = %s, procedimiento = %s 
+                WHERE producto_id = %s """
                 data = (
-                        receta.get_id_producto(),
                         receta.get_id_insumo(),
                         receta.get_cantidad(),
                         receta.get_orden_insumos(),
-                        receta.get_procedimiento()
+                        receta.get_procedimiento(),
+                        receta.get_id_producto()
                         )
                 
                 cursor.execute(sentenciaSQL,data)
@@ -237,11 +236,11 @@ class Conectar_BD():
             except mysql.connector.Error as descripcionDelError:
                 print("¡Hubo un error al intentar conectar la Base de Datos", descripcionDelError)
 
-    def delete_Receta(self, id_producto):
+    def delete_Receta(self, producto_id):
         if self.conexion.is_connected():
             try: 
                 cursor = self.conexion.cursor()
-                sentenciaSQL = "DELETE FROM productos_x_insumos WHERE id = %s " % (id_producto)
+                sentenciaSQL = "DELETE FROM productos_x_insumos WHERE producto_id = %s " % (producto_id)
                 cursor.execute(sentenciaSQL)
                 self.conexion.commit()
                 cursor.close()   
@@ -324,6 +323,41 @@ class Conectar_BD():
             except mysql.connector.Error as descripcionDelError:
                 print("¡Hubo un error al intentar conectar la Base de Datos", descripcionDelError)   
 
+    def listado_Recetas(self, productos):
+        if self.conexion.is_connected():
+            try:
+                cursor = self.conexion.cursor()
+                sentenciaSQL = """select p.nombre as "producto", i.nombre_insumo, pi.cantidad, pi.orden 
+                from productos_x_insumos pi 
+                join productos p on p.id_producto = pi.producto_id  
+                join insumos i on i.id = pi.insumo_id where p.id_producto = %s 
+                order by p.id_producto, pi.orden LIMIT 0, 1000; """ % (productos)
+                cursor.execute(sentenciaSQL)
+                resultados= cursor.fetchall()
+                cursor.close()
+                return resultados
+                
+            except mysql.connector.Error as descripcionDelError:
+                print("¡Hubo un error al intentar conectar la Base de Datos", descripcionDelError) 
+    
+    def listado_Insumos_Dia(self, fecha_produccion):
+        if self.conexion.is_connected():
+            try:
+                cursor = self.conexion.cursor()
+                sentenciaSQL = """select p.nombre, i.nombre_insumo, sum(pi.cantidad * pd.cantidad_producto)
+                from productos_x_insumos pi 
+                join producciones_diarias pd on pd.id_producto = pi.producto_id
+                join productos p on pd.id_producto = p.id_producto
+                join insumos i on i.id = pi.insumo_id WHERE pd.fecha = %s
+                group by p.nombre, i.nombre_insumo
+                order by p.nombre, i.nombre_insumo """ % (fecha_produccion)
+                cursor.execute(sentenciaSQL)
+                resultados= cursor.fetchall()
+                cursor.close()
+                return resultados
+                
+            except mysql.connector.Error as descripcionDelError:
+                print("¡Hubo un error al intentar conectar la Base de Datos", descripcionDelError) 
     
         
                 
