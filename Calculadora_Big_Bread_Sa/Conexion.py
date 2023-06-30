@@ -3,28 +3,20 @@ import random
 
 class Conectar_BD():
     def __init__(self) -> None:
-        try:
-            self.conexion = mysql.connector.connect(
-                host= "localhost",
-                port= 3306, 
-                user= "root",
-                password= 'maximiliano1o1o',
-                db= "bd_big_bread",
-                auth_plugin='mysql_native_password'
-            )
-            if self.conexion.is_connected():
-                print("LA CONEXION FUE EXITOSA")
-
-        except Exception as e:
-            print(e),
-            print("NO SE PUDO CONETAR A LA BASE DE DATOS")
-
+        self.conexion = mysql.connector.connect(
+            host= "localhost",
+            port= 3306, 
+            user= "root",
+            password= 'maximiliano1o1o',
+            db= "bd_big_bread",
+            auth_plugin='mysql_native_password'
+        )
 
     def Insertar_Producto(self, producto):
         if self.conexion.is_connected():
             try:
                 cursor = self.conexion.cursor()
-                sentenciaSQL = "INSERT INTO productos values(%s, %s, %s, %s, %s, %s)"
+                sentenciaSQL = "INSERT INTO productos (id_producto, nombre, descripcion, stock, precio, tiempo_de_preparacion) values(%s, %s, %s, %s, %s, %s)"
                 data = (
                         #producto.get_id_producto(),
                         random.randint(1,999),
@@ -35,6 +27,7 @@ class Conectar_BD():
                         producto.get_tiempo_preparacion(),
                         )
                 
+                print(sentenciaSQL % data)
                 cursor.execute(sentenciaSQL,data)
                 self.conexion.commit()
                 cursor.close()   
@@ -72,15 +65,15 @@ class Conectar_BD():
         if self.conexion.is_connected():
             try:
                 cursor = self.conexion.cursor()
-                sentenciaSQL = "INSERT INTO insumos values(%s, %s, %s, %s, %s, %s)"
+                sentenciaSQL = "INSERT INTO insumos values(%s, %s, %s, %s, %s)"
                 data = (
                         random.randint(1,999),
                         insumo.get_nombre_insumo(),
                         insumo.get_unidad_medida(),
                         insumo.get_precio(),
                         insumo.get_stock(),
-                        insumo.get_id_proveedor(),
                         )
+                print(sentenciaSQL % data)
                 
                 cursor.execute(sentenciaSQL,data)
                 self.conexion.commit()
@@ -102,6 +95,8 @@ class Conectar_BD():
                         receta.get_orden_insumos(),
                         receta.get_procedimiento()
                         )
+                print(data)
+                print(sentenciaSQL % data)
                 cursor.execute(sentenciaSQL,data)
                 self.conexion.commit()
                 cursor.close()   
@@ -114,7 +109,7 @@ class Conectar_BD():
         if self.conexion.is_connected():
             try:
                 cursor = self.conexion.cursor()
-                sentenciaSQL = "UPDATE productos SET nombre = %s, descripcion = %s, stock = %s, precio = %s, tiempo_preparacion = %s WHERE id_producto = %s "
+                sentenciaSQL = "UPDATE productos SET nombre = %s, descripcion = %s, stock = %s, precio = %s, tiempo_de_preparacion = %s WHERE id_producto = %s "
                 data = (
                         producto.get_nombre_producto(),
                         producto.get_descripcion(),
@@ -136,13 +131,12 @@ class Conectar_BD():
         if self.conexion.is_connected():
             try:
                 cursor = self.conexion.cursor()
-                sentenciaSQL = "UPDATE insumos SET nombre_insumo = %s, unidad_medida = %s, precio = %s, stock = %s, proveedor_id = %s WHERE id = %s "
+                sentenciaSQL = "UPDATE insumos SET nombre_insumo = %s, unidad_medida = %s, precio = %s, stock_actual = %s WHERE id = %s "
                 data = (
                         insumo.get_nombre_insumo(),
                         insumo.get_unidad_medida(),
                         insumo.get_precio(),
                         insumo.get_stock(),
-                        insumo.get_id_proveedor(),
                         insumo.get_id_insumo()
                         )
                 
@@ -177,14 +171,13 @@ class Conectar_BD():
         if self.conexion.is_connected():
             try:
                 cursor = self.conexion.cursor()
-                sentenciaSQL = """UPDATE productos_x_insumos SET insumo_id = %s, cantidad = %s, orden = %s, procedimiento = %s 
-                WHERE producto_id = %s """
+                sentenciaSQL = "UPDATE productos_x_insumos SET producto_id = %s, insumo_id = %s, cantidad = %s, orden_insumos = %s, procedimiento = %s WHERE producto_id = %s "
                 data = (
+                        receta.get_id_producto(),
                         receta.get_id_insumo(),
                         receta.get_cantidad(),
                         receta.get_orden_insumos(),
-                        receta.get_procedimiento(),
-                        receta.get_id_producto()
+                        receta.get_procedimiento()
                         )
                 
                 cursor.execute(sentenciaSQL,data)
@@ -227,7 +220,7 @@ class Conectar_BD():
         if self.conexion.is_connected():
             try: 
                 cursor = self.conexion.cursor()
-                sentenciaSQL = "DELETE FROM producciones_diarias WHERE fecha = %s " % (id_produccion_diaria)
+                sentenciaSQL = "DELETE FROM producciones_diarias WHERE id = %s " % (id_produccion_diaria)
                 cursor.execute(sentenciaSQL)
                 self.conexion.commit()
                 cursor.close()   
@@ -236,11 +229,11 @@ class Conectar_BD():
             except mysql.connector.Error as descripcionDelError:
                 print("¡Hubo un error al intentar conectar la Base de Datos", descripcionDelError)
 
-    def delete_Receta(self, producto_id):
+    def delete_Receta(self, id_producto):
         if self.conexion.is_connected():
             try: 
                 cursor = self.conexion.cursor()
-                sentenciaSQL = "DELETE FROM productos_x_insumos WHERE producto_id = %s " % (producto_id)
+                sentenciaSQL = "DELETE FROM productos_x_insumos WHERE id = %s " % (id_producto)
                 cursor.execute(sentenciaSQL)
                 self.conexion.commit()
                 cursor.close()   
@@ -267,19 +260,6 @@ class Conectar_BD():
             try:
                 cursor = self.conexion.cursor()
                 sentenciaSQL = "SELECT * FROM insumos"
-                cursor.execute(sentenciaSQL)
-                resultados= cursor.fetchall()
-                cursor.close()
-                return resultados
-                
-            except mysql.connector.Error as descripcionDelError:
-                print("¡Hubo un error al intentar conectar la Base de Datos", descripcionDelError)
-
-    def listado_Proveedores(self):
-        if self.conexion.is_connected():
-            try:
-                cursor = self.conexion.cursor()
-                sentenciaSQL = "SELECT * FROM proveedores"
                 cursor.execute(sentenciaSQL)
                 resultados= cursor.fetchall()
                 cursor.close()
@@ -323,11 +303,30 @@ class Conectar_BD():
             except mysql.connector.Error as descripcionDelError:
                 print("¡Hubo un error al intentar conectar la Base de Datos", descripcionDelError)   
 
+    def listado_Insumos_Dia(self):
+            if self.conexion.is_connected():
+                try:
+                    cursor = self.conexion.cursor()
+                    sentenciaSQL = """select pd.fecha, p.nombre, i.nombre_insumo, sum(pi.cantidad * pd.cantidad_producto)
+                    from productos_x_insumos pi 
+                    join producciones_diarias pd on pd.id_producto = pi.producto_id
+                    join productos p on pd.id_producto = p.id_producto
+                    join insumos i on i.id = pi.insumo_id 
+                    group by pd.fecha, p.nombre, i.nombre_insumo
+                    order by pd.fecha, p.nombre, i.nombre_insumo """ 
+                    cursor.execute(sentenciaSQL)
+                    resultados= cursor.fetchall()
+                    cursor.close()
+                    return resultados
+                    
+                except mysql.connector.Error as descripcionDelError:
+                    print("¡Hubo un error al intentar conectar la Base de Datos", descripcionDelError)
+    
     def listado_Recetas(self, productos):
         if self.conexion.is_connected():
             try:
                 cursor = self.conexion.cursor()
-                sentenciaSQL = """select p.nombre as "producto", i.nombre_insumo, pi.cantidad, pi.orden 
+                sentenciaSQL = """select p.nombre as "producto", i.nombre_insumo, pi.cantidad, pi.orden, p.id_producto, i.id
                 from productos_x_insumos pi 
                 join productos p on p.id_producto = pi.producto_id  
                 join insumos i on i.id = pi.insumo_id where p.id_producto = %s 
@@ -338,26 +337,39 @@ class Conectar_BD():
                 return resultados
                 
             except mysql.connector.Error as descripcionDelError:
-                print("¡Hubo un error al intentar conectar la Base de Datos", descripcionDelError) 
-    
-    def listado_Insumos_Dia(self, fecha_produccion):
+                print("¡Hubo un error al intentar conectar la Base de Datos", descripcionDelError)        
+                
+    def delete_Receta(self, producto_id, insumo_id):
+        if self.conexion.is_connected():
+            try: 
+                cursor = self.conexion.cursor()
+                sentenciaSQL = "DELETE FROM productos_x_insumos WHERE producto_id = %s AND insumo_id = %s " % (producto_id, insumo_id)
+                cursor.execute(sentenciaSQL)
+                self.conexion.commit()
+                cursor.close()   
+                print("Receta eliminado correctamente")
+
+            except mysql.connector.Error as descripcionDelError:
+                print("¡Hubo un error al intentar conectar la Base de Datos", descripcionDelError)
+
+    def update_Receta(self, receta):
         if self.conexion.is_connected():
             try:
                 cursor = self.conexion.cursor()
-                sentenciaSQL = """select p.nombre, i.nombre_insumo, sum(pi.cantidad * pd.cantidad_producto)
-                from productos_x_insumos pi 
-                join producciones_diarias pd on pd.id_producto = pi.producto_id
-                join productos p on pd.id_producto = p.id_producto
-                join insumos i on i.id = pi.insumo_id WHERE pd.fecha = %s
-                group by p.nombre, i.nombre_insumo
-                order by p.nombre, i.nombre_insumo """ % (fecha_produccion)
-                cursor.execute(sentenciaSQL)
-                resultados= cursor.fetchall()
-                cursor.close()
-                return resultados
+                sentenciaSQL = """UPDATE productos_x_insumos SET insumo_id = %s, cantidad = %s, orden = %s, procedimiento = %s 
+                WHERE producto_id = %s """
+                data = (
+                        receta.get_id_insumo(),
+                        receta.get_cantidad(),
+                        receta.get_orden_insumos(),
+                        receta.get_procedimiento(),
+                        receta.get_id_producto()
+                        )
                 
+                cursor.execute(sentenciaSQL,data)
+                self.conexion.commit()
+                cursor.close()   
+                print("Producto actualizado correctamente")
+
             except mysql.connector.Error as descripcionDelError:
-                print("¡Hubo un error al intentar conectar la Base de Datos", descripcionDelError) 
-    
-        
-                
+                print("¡Hubo un error al intentar conectar la Base de Datos", descripcionDelError)

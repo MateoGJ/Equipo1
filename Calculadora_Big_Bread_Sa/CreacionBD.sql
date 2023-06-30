@@ -1,20 +1,45 @@
-create database bd_big_bread;
-use bd_big_bread;
-create table productos (id_producto int,nombre varchar(45),descripcion varchar(45),
-precio int,tiempo_de_reparacion int,
-primary key (id_producto));
+DROP DATABASE bd_big_bread;
 
-create table proveedores (id int ,nombre varchar (45),direccion varchar (45),
-telefono int,correo varchar (45),
-primary key (id));
+CREATE DATABASE bd_big_bread;
 
-create table productos_x_insumos (producto_id int,insumo_id int,cantidad int,orden int,procedimiento int,
-primary key (producto_id),
-foreign key (insumo_id) references producto(id_producto));
+USE bd_big_bread;
 
-create table Insumos (id int,nombre_insumo  varchar(45),unidad_medida varchar (45),
-precio int,stock_actual int,proveedor_id int,
-primary key (nombre_insumo));
+CREATE TABLE productos (
+  id_producto int,
+  nombre varchar(45),
+  descripcion varchar(45),
+  stock int,
+  precio int,
+  tiempo_de_preparacion int,
+  PRIMARY KEY (id_producto)
+);
 
-create table producciones_diarias (id int, fecha int, id_producto int, cantidad_producto int,
-primary key (id));
+CREATE TABLE insumos (
+  id int,
+  nombre_insumo varchar(45),
+  unidad_medida varchar (45),
+  precio int,
+  stock_actual int,
+
+  PRIMARY KEY (nombre_insumo)
+);
+
+CREATE TABLE productos_x_insumos (
+  producto_id int,
+  insumo_id int,
+  cantidad int,
+  orden int,
+  procedimiento int,
+
+  PRIMARY KEY (producto_id,insumo_id)
+  -- FOREIGN KEY (producto_id) REFERENCES productos (id_producto),
+  -- FOREIGN KEY (insumo_id) REFERENCES insumos (id)
+);
+
+CREATE TABLE producciones_diarias (
+  id int,
+  fecha date,
+  id_producto int,
+  cantidad_producto int,
+  PRIMARY KEY (id)
+);

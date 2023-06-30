@@ -4,15 +4,13 @@ class Insumo:
     unidad_medida = "",
     precio = 0,
     stock = 0,
-    id_proveedor = 0     
         
-    def __init__(self, id_insumo, nombre_insumo, unidad_medida, precio, stock, id_proveedor):
+    def __init__(self, id_insumo, nombre_insumo, unidad_medida, precio, stock):
         self.id_insumo = id_insumo
         self.nombre_insumo = nombre_insumo
         self.unidad_medida = unidad_medida
         self.precio = precio
         self.stock = stock
-        self.id_proveedor = id_proveedor
 
     def get_id_insumo(self):
         return self.id_insumo
@@ -24,8 +22,6 @@ class Insumo:
         return self.precio
     def get_stock(self):
         return self.stock
-    def get_id_proveedor(self):
-        return self.id_proveedor
     
     def set_id_insumo(self, id_insumo):
         self.id_insumo = id_insumo
@@ -37,5 +33,3 @@ class Insumo:
         self.precio = precio
     def set_stock(self, stock):
         self.stock = stock
-    def set_id_proveedor(self, id_proveedor):
-        self.id_proveedor = id_proveedor
