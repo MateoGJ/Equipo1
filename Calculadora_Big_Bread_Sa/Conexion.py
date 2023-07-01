@@ -26,8 +26,6 @@ class Conectar_BD():
                         producto.get_precio(),
                         producto.get_tiempo_preparacion(),
                         )
-                
-                print(sentenciaSQL % data)
                 cursor.execute(sentenciaSQL,data)
                 self.conexion.commit()
                 cursor.close()   
@@ -95,8 +93,6 @@ class Conectar_BD():
                         receta.get_orden_insumos(),
                         receta.get_procedimiento()
                         )
-                print(data)
-                print(sentenciaSQL % data)
                 cursor.execute(sentenciaSQL,data)
                 self.conexion.commit()
                 cursor.close()   
@@ -224,7 +220,7 @@ class Conectar_BD():
                 cursor.execute(sentenciaSQL)
                 self.conexion.commit()
                 cursor.close()   
-                print("Produccion eliminada correctamente")
+                print("Producción eliminada correctamente")
 
             except mysql.connector.Error as descripcionDelError:
                 print("¡Hubo un error al intentar conectar la Base de Datos", descripcionDelError)
